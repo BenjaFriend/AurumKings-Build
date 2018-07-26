@@ -4,22 +4,22 @@ import os;
 from datetime import datetime;
 from subprocess import call;
 
-newPath = r'C:/Builds/AurumKings/Windows/';
-newPath += datetime.now().strftime("%m-%d-%Y %H.%M %p");
+currentTime = datetime.now().strftime("%m-%d-%Y %H.%M %p");
+buildPath = r'C:/Builds/AurumKings/' + currentTime;
 
-print (newPath);
+windowsPath = buildPath + '/Windows/';
 
-if not os.path.exists(newPath):
-    os.makedirs(newPath)
+if not os.path.exists(windowsPath):
+    os.makedirs(windowsPath)
 
-# Run the Aurum Kings build to this folder
+############################ 64-Bit Windows ######################
 call(["C:/Program Files/Unity_2018.1.1f1/Editor/Unity.exe",
     "-batchmode" ,
     "-quit",
     "-logFile",
-    newPath + "/log.txt",
+    windowsPath + "/log.txt",
     "-nographics",
     "-projectPath",
     "C:\Program Files (x86)\Jenkins\workspace\AurumKingsBuild\AurumKings",
     "-buildWindows64Player",
-    newPath + "/AurumKings.exe"]);
+    windowsPath + "/AurumKings.exe"]);
