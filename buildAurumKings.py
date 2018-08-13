@@ -1,62 +1,44 @@
-## Must be run as Admin on Windows 10
-
+########################################################
+## This Must be run as Admin if you are on Windows 10 ##
+########################################################
 import os;
 from datetime import datetime;
 from subprocess import call;
 
-currentTime = datetime.now().strftime("%m-%d-%Y %H.%M %p");
-buildPath = r'C:/Builds/AurumKings/' + currentTime;
+# Define some constant vars for building
+UNITY_INSTALL_LOCATION  = "C:/Program Files/Unity_2018.1.1f1/Editor/Unity.exe";
+PROJECT_PATH            = "C:\Program Files (x86)\Jenkins\workspace\AurumKingsBuild\AurumKings";
+BUILD_TARGET_WINDOWS_64 = "-buildWindows64Player";
+BUILD_TARGET_LINUX_64   = "-buildLinux64Player ";
+BUILD_TARGET_OSX        = "-buildOSXPlayer ";
+BASE_BUILD_PATH         = r'C:/Builds/AurumKings/' + datetime.now().strftime("%m-%d-%Y %H.%M %p") + "/";
+LINUX_64_BUILD_PATH     = BASE_BUILD_PATH + 'Linux_x64/';
+WINDOWS_BUILD_PATH      = BASE_BUILD_PATH + 'Windows/';
+MAC_BULID_PATH          = BASE_BUILD_PATH + 'OSX/';
 
-############################ 64-Bit Windows ######################
-windowsPath = buildPath + '/Windows/';
+## Build the game suing a new subprocess and the defined variables
+def buildGame(buildTarget, outputPath, executeableName):
 
-if not os.path.exists(windowsPath):
-    os.makedirs(windowsPath)
+    if not os.path.exists(outputPath):
+        os.makedirs(outputPath)
 
-call(["C:/Program Files/Unity_2018.1.1f1/Editor/Unity.exe",
-    "-batchmode" ,
-    "-quit",
-    "-logFile",
-    windowsPath + "/log.txt",
-    "-nographics",
-    "-projectPath",
-    "C:\Program Files (x86)\Jenkins\workspace\AurumKingsBuild\AurumKings",
-    "-buildWindows64Player",
-    windowsPath + "/AurumKings.exe"]);
-
-
-############################ 64-Bit LINUX ######################
-linux64Path = buildPath + '/Linux_x64/';
-
-if not os.path.exists(linux64Path):
-    os.makedirs(linux64Path)
-
-call(["C:/Program Files/Unity_2018.1.1f1/Editor/Unity.exe",
-    "-batchmode" ,
-    "-quit",
-    "-logFile",
-    linux64Path + "/log.txt",
-    "-nographics",
-    "-projectPath",
-    "C:\Program Files (x86)\Jenkins\workspace\AurumKingsBuild\AurumKings",
-    "-buildLinux64Player ",
-    linux64Path + "/AurumKings.x86_64"]);
+    call([
+        UNITY_INSTALL_LOCATION,
+        "-batchmode" ,
+        "-quit",
+        "-logFile",
+        outputPath + "_BUILD_LOG.txt",
+        "-nographics",
+        "-projectPath",
+        PROJECT_PATH,
+        buildTarget,
+        outputPath + executeableName
+        ]);
 
 
+#####################################################
+# Call the build functions and bulid the game
 
-############################ 32-Bit LINUX ######################
-linux32Path = buildPath + '/Linux_x32/';
+buildGame(BUILD_TARGET_WINDOWS_64, WINDOWS_BUILD_PATH, "AurumKings.exe");
 
-if not os.path.exists(linux32Path):
-    os.makedirs(linux32Path)
-
-call(["C:/Program Files/Unity_2018.1.1f1/Editor/Unity.exe",
-    "-batchmode" ,
-    "-quit",
-    "-logFile",
-    linux32Path + "/log.txt",
-    "-nographics",
-    "-projectPath",
-    "C:\Program Files (x86)\Jenkins\workspace\AurumKingsBuild\AurumKings",
-    "-buildLinux64Player ",
-    linux32Path + "/AurumKings.x86"]);
+buildGame(BUILD_TARGET_LINUX_64, LINUX_64_BUILD_PATH, "AurumKings.x86_64");
